@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
+import useStateRef from 'react-usestateref'
 import ButtonTodo from './button.component'
 import Input from './input.component'
 import Task from './task.component'
 
 const Navigation = (props) => {
-    const [inputTask, setInputTask] = useState('')
-    const [category, setCategory] = useState();
+    const [inputTask, setInputTask] = useState()
 
     const [formElements, setFormElements] = useState({
         task: {
@@ -20,28 +20,37 @@ const Navigation = (props) => {
             cat: [
                 {value: 'money', displayValue: 'Money'},
                 {value: 'health', displayValue: 'Health'},
-                {value: 'daily', displayValue: 'Daily'}
+                {value: 'daily', displayValue: 'Daily'},
+                {value: 'food', displayValue: 'Food'}
             ]
  
             
         }
     })
-    const [task, setTask] = useState([])
+
+    const [category, setCategory] = useState({
+        value: formElements.categories.cat[0].value,
+        label: formElements.categories.cat[0].displayValue
+    });
+
+    const [task, setTask, ref] = useStateRef([])
 
     const [query, setQuery] = useState();
 
-    // useEffect(() => {
-    //     setTask(inputTask)
-    // }, [inputTask])
+    
 
     useEffect(() => {
         const timeOut = setTimeout(() => setInputTask(query), 500);
         console.log(query)
         return () => clearTimeout(timeOut)
-    }, [query])
+    }, [query, category])
 
     const categoryChangeHandler = (category) => {
-        setCategory(category);
+        const upperCaseCat = category.charAt(0).toUpperCase() + category.slice(1)
+        setCategory({
+            value: category,
+            label: upperCaseCat
+        });
     }
 
     const handleSubmit = (e) => {
@@ -52,14 +61,36 @@ const Navigation = (props) => {
         setTask(prevState => {
           return [
               ...prevState,
-              inputTask
+              {
+                  value: inputTask,
+                  id: Math.random() * 6,
+                  category: category,
+                  complete: false
+              }
           ]
         })
-        console.log(task)
-        console.log(category)
-
     }
 
+    const deleteTaskHandler = (id) => {
+        const newTasks = task.filter(taskItem => {
+            return taskItem.id !== id
+        } )
+        setTask(newTasks)
+    }
+
+    const completeTaskHandler = (id) => {
+       const completeTask =  task.find(taskItem => taskItem.id === id)
+       console.log(completeTask)
+       console.log(id)
+        // setTask(prevState => {
+        //     return [
+        //         ...prevState,
+        //         {
+        //             ...prevState.
+        //         }
+        //     ]
+        // })
+    }
 
     const formElementsArray = [];
     for(let key in formElements) {
@@ -90,6 +121,21 @@ const Navigation = (props) => {
         </form>
     )
 
+    let tasks = null;
+    if(task !== null) {
+       tasks = <ul>
+                {task.map(task => {
+        return <li key={task.id} ><Task 
+                    clicked={() => completeTaskHandler(task.id)}
+                    category={task.category.label}
+                > {task.value}</Task><span onClick={() => deleteTaskHandler(task.id)}>CLOSE</span></li>
+    })}
+
+       </ul> 
+
+
+    }
+
     return(
         <div className="navigation-container">
             <ButtonTodo className="add-todo">Add todo</ButtonTodo>
@@ -98,6 +144,7 @@ const Navigation = (props) => {
             
 
             <ButtonTodo clicked={buttonClickedHandler} className="send">Add task</ButtonTodo>
+            {tasks}
             
         </div>
     );

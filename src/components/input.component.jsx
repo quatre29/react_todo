@@ -13,6 +13,7 @@ const Input = (props) => {
         break;
         case ('select'):
             inputElement = <select 
+                                selected={props.selected}
                                 className={props.className}
                                 type={props.type}
                                 value={props.value}
