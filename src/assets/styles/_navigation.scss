@@ -1,0 +1,18 @@
+.navigation-container {
+  height: 120px;
+  width: 100%;
+  background: salmon;
+  position: absolute;
+
+  .ant-btn {
+    display: block;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
+
+  Input {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+  }
+}
