@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react'
-import useStateRef from 'react-usestateref'
+import React, {useState, useEffect, useReducer} from 'react'
 import ButtonTodo from './button.component'
 import Input from './input.component'
 import Task from './task.component'
+import todoReducer from '../reducer/reducer'
+import * as actions from '../reducer/actions'
 
 const Navigation = (props) => {
     const [inputTask, setInputTask] = useState()
@@ -33,9 +34,10 @@ const Navigation = (props) => {
         label: formElements.categories.cat[0].displayValue
     });
 
-    const [task, setTask, ref] = useStateRef([])
+    const [task, setTask] = useReducer(todoReducer, [])
 
     const [query, setQuery] = useState();
+
 
     
 
@@ -44,6 +46,7 @@ const Navigation = (props) => {
         console.log(query)
         return () => clearTimeout(timeOut)
     }, [query, category])
+
 
     const categoryChangeHandler = (category) => {
         const upperCaseCat = category.charAt(0).toUpperCase() + category.slice(1)
@@ -58,38 +61,28 @@ const Navigation = (props) => {
     }
 
     const buttonClickedHandler = () => {
-        setTask(prevState => {
-          return [
-              ...prevState,
-              {
-                  value: inputTask,
-                  id: Math.random() * 6,
-                  category: category,
-                  complete: false
-              }
-          ]
+        setTask({
+            type: actions.ADD_TODO,
+            value: inputTask,
+            category: category
         })
     }
 
     const deleteTaskHandler = (id) => {
-        const newTasks = task.filter(taskItem => {
-            return taskItem.id !== id
-        } )
-        setTask(newTasks)
+        setTask({
+            type: actions.REMOVE_TODO,
+            id: id
+        })
     }
 
     const completeTaskHandler = (id) => {
        const completeTask =  task.find(taskItem => taskItem.id === id)
+       setTask({
+           type: actions.COMPLETE_TODO,
+           id: id,
+           complete: completeTask.complete
+       })
        console.log(completeTask)
-       console.log(id)
-        // setTask(prevState => {
-        //     return [
-        //         ...prevState,
-        //         {
-        //             ...prevState.
-        //         }
-        //     ]
-        // })
     }
 
     const formElementsArray = [];
@@ -116,35 +109,28 @@ const Navigation = (props) => {
                 categories={formEl.config.cat}
                 className={formEl.config.className}
             />
-            
             })}
         </form>
     )
 
-    let tasks = null;
+    let tasksRender = null;
     if(task !== null) {
-       tasks = <ul>
+       tasksRender = <ul>
                 {task.map(task => {
         return <li key={task.id} ><Task 
                     clicked={() => completeTaskHandler(task.id)}
                     category={task.category.label}
                 > {task.value}</Task><span onClick={() => deleteTaskHandler(task.id)}>CLOSE</span></li>
     })}
-
        </ul> 
-
-
     }
 
     return(
         <div className="navigation-container">
             <ButtonTodo className="add-todo">Add todo</ButtonTodo>
             {form}
-
-            
-
             <ButtonTodo clicked={buttonClickedHandler} className="send">Add task</ButtonTodo>
-            {tasks}
+            {tasksRender}
             
         </div>
     );
