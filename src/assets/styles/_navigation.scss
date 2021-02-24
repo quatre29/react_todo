@@ -1,8 +1,10 @@
 .navigation-container {
-  height: 120px;
-  width: 100%;
   background: salmon;
-  position: absolute;
+  position: relative;
+  margin: 0 auto;
+  height: 100%;
+  width: 1200px;
+  margin: 0 auto;
 
   .ant-btn {
     display: block;

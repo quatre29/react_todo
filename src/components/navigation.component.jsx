@@ -1,8 +1,7 @@
-import React, {useState, useEffect, useReducer} from 'react'
+import React, {useState, useEffect, useReducer, useContext} from 'react'
 import ButtonTodo from './button.component'
 import Input from './input.component'
-import Task from './task.component'
-import todoReducer from '../reducer/reducer'
+import {Context} from '../hoc/store'
 import * as actions from '../reducer/actions'
 
 const Navigation = (props) => {
@@ -34,7 +33,8 @@ const Navigation = (props) => {
         label: formElements.categories.cat[0].displayValue
     });
 
-    const [task, setTask] = useReducer(todoReducer, [])
+    const [task, setTask] = useContext(Context)
+
 
     const [query, setQuery] = useState();
 
@@ -68,23 +68,6 @@ const Navigation = (props) => {
         })
     }
 
-    const deleteTaskHandler = (id) => {
-        setTask({
-            type: actions.REMOVE_TODO,
-            id: id
-        })
-    }
-
-    const completeTaskHandler = (id) => {
-       const completeTask =  task.find(taskItem => taskItem.id === id)
-       setTask({
-           type: actions.COMPLETE_TODO,
-           id: id,
-           complete: completeTask.complete
-       })
-       console.log(completeTask)
-    }
-
     const formElementsArray = [];
     for(let key in formElements) {
         formElementsArray.push({
@@ -113,24 +96,13 @@ const Navigation = (props) => {
         </form>
     )
 
-    let tasksRender = null;
-    if(task !== null) {
-       tasksRender = <ul>
-                {task.map(task => {
-        return <li key={task.id} ><Task 
-                    clicked={() => completeTaskHandler(task.id)}
-                    category={task.category.label}
-                > {task.value}</Task><span onClick={() => deleteTaskHandler(task.id)}>CLOSE</span></li>
-    })}
-       </ul> 
-    }
-
     return(
         <div className="navigation-container">
-            <ButtonTodo className="add-todo">Add todo</ButtonTodo>
             {form}
-            <ButtonTodo clicked={buttonClickedHandler} className="send">Add task</ButtonTodo>
-            {tasksRender}
+            <ButtonTodo 
+                clicked={buttonClickedHandler} 
+                className="send">Add task
+            </ButtonTodo>
             
         </div>
     );
