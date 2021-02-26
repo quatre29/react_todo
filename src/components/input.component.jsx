@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -13,6 +14,12 @@ const useStyles = makeStyles((theme) => ({
     selectEmpty: {
       marginTop: theme.spacing(2),
     },
+    root: {
+        '& > *': {
+          margin: theme.spacing(1),
+          width: '25ch',
+        },
+      },
   }));
 
 const Input = (props) => {
@@ -20,8 +27,11 @@ const Input = (props) => {
 
     let inputElement = null;
     switch(props.type) {
-        case ('text'):
-            inputElement = <input 
+        case ('text'):      
+            inputElement = <TextField 
+                                label="Add taks"
+                                id="standard-basic"
+                                onKeyPress={props.submit}
                                 className={props.className}
                                 type={props.type}
                                 value={props.value}
@@ -47,13 +57,14 @@ const Input = (props) => {
 
         // </select>
                  
-                inputElement = <FormControl className={props.className}>
-                                     <InputLabel shrink id="demo-simple-select-placeholder-label-label">Categories</InputLabel>
+                inputElement = <FormControl className={classes.formControl}>
+                                     <InputLabel id="demo-simple-select-helper-label">Categories</InputLabel>
                                   <Select
-                                    labelId="demo-simple-select-placeholder-label-label"
-                                    id="demo-simple-select-placeholder-label"
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
                                     value={props.value}
                                     onChange={props.change}
+                                    
                                     // className={classes.selectEmpty}
                                     >
                                     {/* <option aria-label="None" value="" />

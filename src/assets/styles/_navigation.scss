@@ -3,8 +3,17 @@
   position: relative;
   margin: 0 auto;
   height: 100%;
-  width: 1200px;
+  width: 900px;
   margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  .accordion-todo {
+    .create-task-container {
+    }
+
+    .create-category-container {
+    }
+  }
 
   .ant-btn {
     display: block;
